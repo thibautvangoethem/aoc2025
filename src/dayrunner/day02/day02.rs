@@ -1,6 +1,8 @@
 use fancy_regex::Regex;
 use std::{fs, str::FromStr};
+// brute force solution, only had 1 hour today, not going to go all smart on this
 //not i32 because i dont know yet whether the ranges will be within 2^32
+// => checked u64 should be fine
 struct Range {
     start: u64,
     end: u64,
