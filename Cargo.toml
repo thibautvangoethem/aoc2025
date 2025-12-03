@@ -1,7 +1,8 @@
 [package]
-name = "aoc2026"
+name = "aoc2025"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 fancy-regex = "0.16.2"
+itertools = "0.14.0"
