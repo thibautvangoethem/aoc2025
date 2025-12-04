@@ -8,7 +8,7 @@ use std::env;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let (mode, day, runtype) = parse_args()?;
     // let mode = "run".to_string();
-    // let day = 3;
+    // let day = 4;
     // let runtype = Some("test".to_string());
     run_mode(mode, day, runtype)
 }
