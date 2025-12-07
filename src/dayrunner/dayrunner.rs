@@ -3,6 +3,7 @@ use crate::dayrunner::day02::day02;
 use crate::dayrunner::day03::day03;
 use crate::dayrunner::day04::day04;
 use crate::dayrunner::day05::day05;
+use crate::dayrunner::day06::day06;
 use std::path::PathBuf;
 
 pub fn rundays(path: &str, runtype: &str, day: u32) -> Result<(), Box<dyn std::error::Error>> {
@@ -16,6 +17,7 @@ pub fn rundays(path: &str, runtype: &str, day: u32) -> Result<(), Box<dyn std::e
         3 => day03::solve(path_buf.to_str().unwrap()),
         4 => day04::solve(path_buf.to_str().unwrap()),
         5 => day05::solve(path_buf.to_str().unwrap()),
+        6 => day06::solve(path_buf.to_str().unwrap()),
         _ => {
             println!("Day {} not implemented yet", day);
             return Err("Day not implemented yet".into());
