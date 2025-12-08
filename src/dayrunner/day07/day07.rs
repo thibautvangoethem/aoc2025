@@ -65,7 +65,7 @@ struct VisitorAdvanced {
 pub fn solve2(path: &str) -> Result<(), Box<dyn std::error::Error>> {
     //Honestly looking back this code feels very inneficient, does a bit of caching/dp but really not far enough.
     //Feels also like a mathematical solution should be there
-    //That being said my pc runs this in 0.17s, so rust even handles my badly optimised code quite well
+    //That being said my pc runs this in 0.17s (debug build)/0.02s(optimized), so rust even handles my badly optimised code quite well
     let binding = fs::read_to_string(path).expect("Should have been able to read the file");
     let contents = binding.lines();
     let mut splitter: HashMap<(usize, usize), u64> = HashMap::new();
