@@ -1,10 +1,4 @@
-use std::{
-    collections::{HashSet, VecDeque},
-    fs,
-    str::FromStr,
-};
-
-use itertools::Itertools;
+use std::{collections::VecDeque, fs, str::FromStr};
 
 pub fn solve(path: &str) -> Result<(), Box<dyn std::error::Error>> {
     solve1(path)?;
@@ -14,8 +8,8 @@ pub fn solve(path: &str) -> Result<(), Box<dyn std::error::Error>> {
 
 #[derive(Debug, Clone, PartialEq)]
 struct Machine {
-    lights: Vec<bool>,
-    button_wiring: Vec<Vec<bool>>,
+    lights: u16,
+    button_wiring: Vec<u16>,
     joltage_req: Vec<i32>,
 }
 
@@ -25,26 +19,26 @@ impl FromStr for Machine {
     type Err = ParseError;
     fn from_str(s: &str) -> Result<Self, ParseError> {
         let vals: Vec<&str> = s.trim().split(" ").collect();
-        let mut lights: Vec<bool> = Vec::new();
-        let mut wiring: Vec<Vec<bool>> = Vec::new();
+        let mut lights: u16 = 0;
+        let mut wiring: Vec<u16> = Vec::new();
         let mut jolt: Vec<i32> = Vec::new();
         for handling in vals {
             let mut c_iter = handling.chars();
             let first_char: char = c_iter.next().unwrap();
             if first_char == '[' {
+                let mut idx = 0;
                 while let Some(val) = c_iter.next() {
                     if val == '#' {
-                        lights.push(true);
-                    } else if val == '.' {
-                        lights.push(false);
+                        lights ^= 1 << idx;
                     }
+                    idx += 1;
                 }
             } else if first_char == '(' {
-                let mut subwiring: Vec<bool> = vec![false; lights.len()];
+                let mut subwiring: u16 = 0;
                 while let Some(val) = c_iter.next() {
                     if val != ',' && val != ')' {
                         let i = val.to_digit(10).unwrap();
-                        subwiring[i as usize] = true
+                        subwiring ^= 1 << i;
                     }
                 }
                 wiring.push(subwiring);
@@ -70,31 +64,32 @@ impl FromStr for Machine {
 
 #[derive(Clone, Debug)]
 struct Visiting {
-    state: Vec<bool>,
-    visited: HashSet<usize>,
+    state: u16,
+    //used for bitwise operations
+    visited: u16,
 }
-
-fn apply_vec(state: &Vec<bool>, apply: &Vec<bool>) -> Vec<bool> {
-    state
-        .iter()
-        .zip(apply.iter())
-        .map(|(val1, val2)| val1 ^ val2)
-        .collect()
+fn get_bit_at(input: &u16, n: &usize) -> bool {
+    if *n < 16 {
+        input & (1 << n) != 0
+    } else {
+        false
+    }
 }
 
 fn bfs_search_machine(machine: &Machine) -> usize {
     let mut searching: VecDeque<Visiting> = VecDeque::from([Visiting {
-        state: vec![false; machine.lights.len()],
-        visited: HashSet::new(),
+        state: 0,
+        visited: 0,
     }]);
     while let Some(handling) = searching.pop_front() {
         for (idx, val) in machine.button_wiring.iter().enumerate() {
-            if !handling.visited.contains(&idx) {
+            if !get_bit_at(&handling.visited, &idx) {
                 let mut newvisit = handling.visited.clone();
-                newvisit.insert(idx.clone());
-                let newstate = apply_vec(&handling.state, val);
+                newvisit ^= 1 << idx;
+                let newstate = handling.state ^ val;
                 if newstate == machine.lights {
-                    return newvisit.len();
+                    //huh there is a count ones function on integer, neat
+                    return newvisit.count_ones() as usize;
                 }
                 searching.push_back(Visiting {
                     state: newstate,
