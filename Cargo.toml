@@ -7,3 +7,4 @@ edition = "2021"
 fancy-regex = "0.16.2"
 itertools = "0.14.0"
 rayon = "1.11.0"
+z3 = { version = "0.19.6", features = ["vcpkg"] }
